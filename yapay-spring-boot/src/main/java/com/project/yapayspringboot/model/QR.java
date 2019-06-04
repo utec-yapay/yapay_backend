@@ -1,5 +1,7 @@
 package com.project.yapayspringboot.model;
 
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.UUID;
 import java.util.Base64;
 
@@ -7,8 +9,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
+// import java.nio.file.FileSystems;
+// import java.nio.file.Path;
+
+import org.joda.time.DateTime;
+import org.joda.time.Period;
+import org.joda.time.format.DateTimeFormat;
 
 import org.json.simple.JSONObject;
 
@@ -21,42 +27,50 @@ import com.google.zxing.WriterException;
 public class QR {
     // TODO: Replace System.out.println's with logger
 
-    private static void generateQR() throws WriterException, IOException {
-        int height = 500;
-        int width = 700;
-        String filePath = "./qr_example.png";
+    private UUID id = UUID.randomUUID();
+    private String qrcodeData;
+    private DateTime expiration;
 
-        /* Create dummy json */
-        JSONObject dummy_json = new JSONObject();
-        dummy_json.put("paymentId", UUID.randomUUID());
-        dummy_json.put("companyId", UUID.randomUUID());
-        dummy_json.put("companyName", "Dodo Attack SA");
-        dummy_json.put("amount", new Float(54.80));
-        StringWriter text = new StringWriter();
-        dummy_json.writeJSONString(text);
+    public QR(UUID paymentId, Company company, float amount) {
+
+        try {
+            qrcodeData = generateQR(paymentId, company, amount);
+        }catch (Exception e){
+            System.out.println("There was an error. " + e);
+        }
+    };
+
+    static public String generateQR(UUID paymentId, Company company, Float amount) throws WriterException, IOException{
+        int size = 500;
+
+        /* Create json */
+        JSONObject json = new JSONObject();
+        json.put("paymentId", paymentId.toString());
+        json.put("companyPhone", company.getPhone());
+        json.put("companyName", company.getName());
+        json.put("amount", amount);
+        StringWriter jsonText = new StringWriter();
+        json.writeJSONString(jsonText);
 
         /* Encode QR into bit matrix */
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        BitMatrix bitMatrix = qrCodeWriter.encode(text.toString(), BarcodeFormat.QR_CODE, width, height);
-
-        /* Bit matrix to image in png file */
-        Path path = FileSystems.getDefault().getPath(filePath);
-        MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
+        BitMatrix bitMatrix = qrCodeWriter.encode(jsonText.toString(), BarcodeFormat.QR_CODE, size, size);
 
         /* Bit matrix to Base64 string */
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         MatrixToImageWriter.writeToStream(bitMatrix, "PNG", out);
-        String qrCodeString = "data:image/png;base64," + Base64.getEncoder().encodeToString(out.toByteArray());
 
-        System.out.println(qrCodeString);
+        return "data:image/png;base64," + Base64.getEncoder().encodeToString(out.toByteArray());
+
+        /* Bit matrix to image in png file
+        String filePath = "./example_qr.png";
+        Path path = FileSystems.getDefault().getPath(filePath);
+        MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
+        */
     }
 
-    public static void main(String[] args){
-        try {
-            generateQR();
-        }
-        catch (Exception e){
-            System.out.println("There was an error. " + e.getMessage());
-        }
+    static public void main(String args[]){
+        QR qr = new QR(UUID.randomUUID(), new Company("Dodo Attack SA", "993111295"), new Float(324.2));
     }
+
 }
