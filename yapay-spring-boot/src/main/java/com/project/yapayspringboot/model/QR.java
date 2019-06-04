@@ -1,7 +1,5 @@
 package com.project.yapayspringboot.model;
 
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.UUID;
 import java.util.Base64;
 
@@ -13,8 +11,6 @@ import java.io.StringWriter;
 // import java.nio.file.Path;
 
 import org.joda.time.DateTime;
-import org.joda.time.Period;
-import org.joda.time.format.DateTimeFormat;
 
 import org.json.simple.JSONObject;
 
