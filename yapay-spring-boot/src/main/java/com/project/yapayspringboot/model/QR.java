@@ -38,7 +38,7 @@ public class QR {
         }catch (Exception e){
             System.out.println("There was an error. " + e);
         }
-    };
+    }
 
     static public String generateQR(UUID paymentId, Company company, Float amount) throws WriterException, IOException{
         int size = 500;
@@ -69,8 +69,12 @@ public class QR {
         */
     }
 
+    public UUID getId(){ return id; }
+    public String getQrData(){ return qrcodeData; }
+
     static public void main(String args[]){
         QR qr = new QR(UUID.randomUUID(), new Company("Dodo Attack SA", "993111295"), new Float(324.2));
+        System.out.println(qr.getQrData());
     }
 
 }
