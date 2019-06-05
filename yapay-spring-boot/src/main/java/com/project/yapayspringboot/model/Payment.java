@@ -13,4 +13,7 @@ public class Payment {
         totalAmount = amount;
         qr = new QR(id, company, totalAmount);
     }
+
+    public String getQrData(){ return qr.getQrData(); }
+    public UUID getId(){ return id; }
 }
