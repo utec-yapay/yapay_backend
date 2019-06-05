@@ -10,8 +10,6 @@ import java.io.StringWriter;
 // import java.nio.file.FileSystems;
 // import java.nio.file.Path;
 
-import org.joda.time.DateTime;
-
 import org.json.simple.JSONObject;
 
 import com.google.zxing.client.j2se.MatrixToImageWriter;
@@ -25,7 +23,6 @@ public class QR {
 
     private UUID id = UUID.randomUUID();
     private String qrcodeData;
-    private DateTime expiration;
 
     public QR(UUID paymentId, Company company, float amount) {
 
