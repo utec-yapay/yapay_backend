@@ -24,7 +24,7 @@ public class QR {
     private UUID id = UUID.randomUUID();
     private String qrcodeData;
 
-    public QR(UUID paymentId, Company company, float amount) {
+    public QR(UUID paymentId, Company company, Float amount) {
 
         try {
             qrcodeData = generateQR(paymentId, company, amount);
@@ -66,7 +66,7 @@ public class QR {
     public String getQrData(){ return qrcodeData; }
 
     static public void main(String args[]){
-        QR qr = new QR(UUID.randomUUID(), new Company("Dodo Attack SA", "993111295"), new Float(324.2));
+        QR qr = new QR(UUID.randomUUID(), new Company("Dodo Attack SA", "993111295"), 324.2f);
         System.out.println(qr.getQrData());
     }
 
