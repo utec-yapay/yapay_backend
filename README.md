@@ -47,7 +47,7 @@ None
 ```
 
 ### Verify if payment is confirmed
-#### Request: ```GET /payments/confirm```
+#### Request: ```GET /payments/isconfirmed```
 ```
 "paymentId": uuid as string
 ```
