@@ -30,9 +30,16 @@ public class PaymentController {
         * confirmed  */
 
         Payment paymentToConfirm;
-        if (paymentId==null || (paymentToConfirm = unconfirmedPayments.get(paymentId))==null) {
-            throw new IllegalArgumentException("Invalid, missing or already confirmed Payment ID");
+        if (paymentId==null){
+            throw new IllegalArgumentException("Missing Payment ID");
         }
+
+        paymentToConfirm = unconfirmedPayments.get(paymentId);
+        if (paymentToConfirm==null){
+            throw new IllegalArgumentException("Invalid or already confirmed Payment ID");
+        }
+
+
 
         paymentToConfirm.confirm();
         unconfirmedPayments.remove(paymentId);
