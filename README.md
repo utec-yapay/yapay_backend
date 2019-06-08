@@ -10,7 +10,7 @@ $ sudo apt install maven (Ubuntu)
 ```
 Run SpringBoot with Maven
 ```
-$ cd yapay_backend
+$ cd yapay_backend/yapay-spring-boot
 $ mvn spring-boot:run
 ```
 
