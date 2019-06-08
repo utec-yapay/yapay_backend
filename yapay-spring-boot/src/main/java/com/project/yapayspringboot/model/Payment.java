@@ -16,4 +16,8 @@ public class Payment {
 
     public String getQrData(){ return qr.getQrData(); }
     public UUID getId(){ return id; }
+
+    public void confirm(){
+        // TODO: Add to database
+    }
 }
