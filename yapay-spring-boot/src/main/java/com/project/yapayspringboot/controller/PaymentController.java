@@ -43,7 +43,7 @@ public class PaymentController {
     public Boolean isconfirmPayment(@RequestHeader("paymentId") UUID paymentId) throws IllegalArgumentException{
         // TODO: Is there a way to differentiate an invalid payment from a confirmed one?
 
-        /* Returns false if payment is confirmed
+        /* Returns false if payment is not confirmed
         * or invalid. Otherwise, returns true
         *
         * Throws exception if payment ID wasn't
