@@ -15,6 +15,11 @@ $ mvn spring-boot:run
 ```
 
 ## API Endpoints
+Current commit isn't working. To get this results...
+```
+$ git checkout c1f6004418ee7fbb10f22c618f1e2c74934090a4
+```
+
 ### Create payment
 #### Request: ```POST /payments```
 #### Request Body: 
