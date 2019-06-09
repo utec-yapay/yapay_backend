@@ -18,7 +18,8 @@ public class Payment {
     public String generateJwt(){
         // TODO: Generate JWT
 
-        return "";
+        // TMP: return actual generated jwt
+        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaWQiOjEyMywiYW10IjoxMDAsImNwbiI6ImRyaW1lciIsImNwcCI6Ijk5MzMyMTMyMyJ9.UvkMYjH0rUxeCSdlQnxkZqma6QO0Gkb49N7cE92UnQ8";
     }
 
     public boolean confirm(){
