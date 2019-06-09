@@ -3,21 +3,34 @@ package com.project.yapayspringboot.model;
 import java.util.UUID;
 
 public class Payment {
-    private UUID id = UUID.randomUUID();
+    private Long id;
     private Company company;
-    private QR qr;
     private float totalAmount;
+    private boolean confirmed = false;
 
     public Payment(String companyName, String companyPhone, float amount) {
         company = new Company(companyName, companyPhone);
         totalAmount = amount;
-        qr = new QR(id, company, totalAmount);
-    }
-
-    public String getQrData(){ return qr.getQrData(); }
-    public UUID getId(){ return id; }
-
-    public void confirm(){
         // TODO: Add to database
+        // id = id in data base
     }
+
+    public String generateJwt(){
+        // TODO: Generate JWT
+
+        return "";
+    }
+
+    public boolean confirm(){
+        if (confirmed) return false;
+        confirmed = true;
+
+        // TODO: Find payment in database and update confirmed attribute
+
+
+        return true;
+    }
+
+    public Long getId(){ return id; }
+    public boolean isConfirmed() { return confirmed; }
 }

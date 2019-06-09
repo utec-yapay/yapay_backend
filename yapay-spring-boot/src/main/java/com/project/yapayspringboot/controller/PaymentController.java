@@ -11,53 +11,61 @@ import java.util.UUID;
 public class PaymentController {
     // TODO: Error handling
 
-    Hashtable<UUID, Payment> unconfirmedPayments = new Hashtable<UUID, Payment>();
-
     @PostMapping("/payments")
-    public Payment createPayment(@RequestBody Payment newpayment){
-        unconfirmedPayments.put(newpayment.getId(), newpayment);
-        return newpayment;
+    public String createPayment(@RequestBody Payment newpayment){
+        // TODO: Valid request body
+
+        /* Creates payment and returns the JSON
+        *  Web Token (JWT) that will be use to
+        *  create a QR.
+        *
+        *  JWT payload includes: paymentId, companyPhone,
+        *                        companyName, amount
+        *
+        *  Throws exception if request body is missing any
+        *  of the parameters: companyName, companyPhone, amount
+        */
+
+        return newpayment.generateJwt();
     }
 
     @GetMapping("/payments/confirm")
     public synchronized void confirmPayment(@RequestHeader("paymentId") UUID paymentId) throws IllegalArgumentException{
-        /* Confirms payment with id reqPaymentId,
-        * inserts payment to database and removes
-        * its record from unconfirmedPayments.
+        /* Confirms payment with id paymentId and
+        * inserts payment to database
         *
         * Throws exception if payment ID wasn't
-        * specified, is invalid or is already
+        * specified, doesn't exist or is already
         * confirmed  */
 
-        Payment paymentToConfirm;
         if (paymentId==null){
             throw new IllegalArgumentException("Missing Payment ID");
         }
 
-        paymentToConfirm = unconfirmedPayments.get(paymentId);
-        if (paymentToConfirm==null){
-            throw new IllegalArgumentException("Invalid or already confirmed Payment ID");
+        Payment paymentToConfirm;
+        // TODO: Find payment in database
+        //       If payment doesn't exist: throw error
+
+        if (!paymentToConfirm.confirm()){
+            throw new IllegalArgumentException("Payment with ID " + paymentId + " doesn't exist");
         }
-
-
-
-        paymentToConfirm.confirm();
-        unconfirmedPayments.remove(paymentId);
 
     }
 
     @GetMapping("/payments/isconfirmed")
     public Boolean isconfirmPayment(@RequestHeader("paymentId") UUID paymentId) throws IllegalArgumentException{
-        // TODO: Is there a way to differentiate an invalid payment from a confirmed one?
+        /* Throws exception if payment ID wasn't
+        * specified or doesn't exist */
 
-        /* Returns false if payment is not confirmed
-        * or invalid. Otherwise, returns true
-        *
-        * Throws exception if payment ID wasn't
-        * specified */
-        if (paymentId==null) throw new IllegalArgumentException("Missing Payment ID");
+        if (paymentId==null) {
+            throw new IllegalArgumentException("Missing Payment ID");
+        }
 
-        return !unconfirmedPayments.containsKey(paymentId);
+        Payment paymentToVerify;
+        // TODO: Find payment in database
+        //       If payment doesn't exist: throw error
+
+        return paymentToVerify.isConfirmed();
     }
 
 }
