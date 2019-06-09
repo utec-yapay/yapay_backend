@@ -7,8 +7,8 @@ CREATE database YaPayDB;
 
 CREATE TABLE public.payments
 (
-    payment_id uuid NOT NULL,
-    company_id uuid NOT NULL,
+    payment_id BIGSERIAL,
+    company_phone varchar(9) NOT NULL,
     company_name character varying(225)  NOT NULL,
     total double precision NOT NULL,
     payment_date timestamp without time zone NOT NULL,
