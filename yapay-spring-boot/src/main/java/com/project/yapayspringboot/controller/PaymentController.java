@@ -47,7 +47,7 @@ public class PaymentController {
     }
 
     @GetMapping("/payments/confirm")
-    public synchronized boolean confirmPayment(@RequestHeader("paymentId") Long paymentId)
+    public synchronized boolean confirmPayment(@RequestHeader("pid") Long paymentId)
             throws IllegalArgumentException{
         /* Confirms payment with id paymentId and
         * inserts payment to database
