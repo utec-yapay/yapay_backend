@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class PaymentDao {
@@ -37,7 +38,7 @@ public class PaymentDao {
         // Logger: .forEach(customer -> log.info(customer.toString()))
     }
 
-    public Long insertPayment(Payment payment){
+    public Map<String,Object> insertPayment(Payment payment){
         /* Inserts a Payment, taking the companyPhone,
         * companyName and totalAmount. The database
         * automatically sets the id and creation_date
@@ -58,7 +59,7 @@ public class PaymentDao {
             }
         , keyHolder);
 
-        return (long) keyHolder.getKeys().get("payment_id");
+        return keyHolder.getKeys();
     }
 
     public Payment selectPaymentById(Long paymentId) throws EmptyResultDataAccessException{
@@ -96,6 +97,4 @@ public class PaymentDao {
             payment.getId()
         );
     }
-
-
 }
