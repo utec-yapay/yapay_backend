@@ -1,18 +1,31 @@
 package com.project.yapayspringboot.model;
 
-import java.util.UUID;
-
 public class Payment {
     private Long id;
     private Company company;
-    private float totalAmount;
-    private boolean confirmed = false;
+    private Float totalAmount;
+    private Boolean confirmed = false;
 
-    public Payment(String companyName, String companyPhone, float amount) {
+    public Payment(String companyName, String companyPhone, Float amount) {
+        /* This constructor is used when creating a
+        *  new payment.
+        *  The controller inserts the object to the
+        *  database, which returns an id. Then, it
+        * sets the payment id */
+
         company = new Company(companyName, companyPhone);
         totalAmount = amount;
-        // TODO: Add to database
-        // id = id in data base
+        confirmed = false;
+    }
+
+    public Payment(String companyName, String companyPhone, Float amount, Boolean isconfirmed, Long paymentId) {
+        /* This constructor is used when creating a
+        * payment from the database */
+
+        company = new Company(companyName, companyPhone);
+        totalAmount = amount;
+        id = paymentId;
+        confirmed = isconfirmed;
     }
 
     public String generateJwt(){
@@ -21,16 +34,19 @@ public class Payment {
         return "";
     }
 
-    public boolean confirm(){
+
+
+    public Boolean confirm(){
         if (confirmed) return false;
-        confirmed = true;
-
-        // TODO: Find payment in database and update confirmed attribute
-
-
-        return true;
+        return confirmed = true;
     }
 
+    public void setId(Long id) { this.id = id; }
+
+    public Float getTotalAmount() { return totalAmount; }
+    public Company getCompany() { return company; }
     public Long getId(){ return id; }
-    public boolean isConfirmed() { return confirmed; }
+    public Boolean isConfirmed() { return confirmed; }
+
+
 }
