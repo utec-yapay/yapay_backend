@@ -18,10 +18,12 @@ public class PaymentController {
 
     @RequestMapping("/confirmEvent/{id}")
     public SseEmitter confirmEvent(@PathVariable(value="id") Long id) {
-        SseEmitter sseEmitter = new SseEmitter();
+        long timeout = 10000L;
+        SseEmitter sseEmitter = new SseEmitter(timeout); // 15s
         emitters.put(id, sseEmitter);
-        System.out.println("Inserting key: " + id + " - value: "+ sseEmitter);
-        //sseEmitter.onCompletion(() -> emitters.remove(id));
+        System.out.println("Connection established with client. Now processing payment with id: " + id +
+                ". Time remaining: " + (timeout/1000) + " secs");
+        sseEmitter.onCompletion(() -> emitters.remove(id));
         return sseEmitter;
     }
 
@@ -46,7 +48,6 @@ public class PaymentController {
     @GetMapping("/payments/confirm")
     public synchronized boolean confirmPayment(@RequestHeader("paymentId") Long paymentId)
             throws IllegalArgumentException{
-        System.out.println("Hit: " + paymentId);
         /* Confirms payment with id paymentId and
         * inserts payment to database
         *
@@ -68,11 +69,13 @@ public class PaymentController {
 //        }
 
         try {
-            System.out.println(emitters.get(paymentId));
             emitters.get(paymentId)
                     .send(SseEmitter.event()
                             .name("yapay-confirm-payment")
-                            .data("here goes a confirmed payment"));
+                            .data("Payment with id" + paymentId + " confirmed."));
+            emitters.get(paymentId).complete();
+            System.out.println("Confirmation of payment with id: " + paymentId + "completed. Connection closed");
+            // Insert confirmed into db
             return true;
         } catch (IOException e) {
             e.printStackTrace();
