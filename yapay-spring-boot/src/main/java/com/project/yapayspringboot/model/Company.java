@@ -11,7 +11,7 @@ public class Company {
         this.phone = phoneNumber;
     }
 
-    public String getName() { return name; }
-    public String getPhone() { return phone;  }
+    public String getName() { return this.name; }
+    public String getPhone() { return this.phone;  }
 
 }
