@@ -20,47 +20,59 @@ This endpoints don't apply to current commit. To get this results...
 $ git checkout c1f6004418ee7fbb10f22c618f1e2c74934090a4
 ```
 
+
+### List payments
+#### Request ```GET /payments```
+#### Response
+List of payments
+```js
+[
+  {
+    "id": long int,
+    "company": {
+        "phone": string with 9 chars,
+        "name": string
+    },
+    "totalAmount": float,
+    "confirmed": boolean
+  },
+  ...
+]
+```
+
 ### Create payment
 #### Request: ```POST /payments```
-#### Request Body: 
+#### Request Body:
 ```js
 {
-  "amount":       float,
-  "companyName":  string,
-  "companyPhone": string
+  "amt": float,              // payment amount
+  "cpn": string,             // company name
+  "cpp": string with 9 chars // company phone
 }
  ```
  #### Response
-Possible error: 400 or 500 error code if any body parameter is missing
  ```js
+plain JSON Web Token with a payload of:
 {
-  "id":      uuid as string,
-  "qrData":  base64 encoded png
+  "pid": long int,          // payment id
+  "amt": float,             // payment amount
+  "cpn": string,            // company name
+  "cpp" string with 9 chars // company phone
 }
  ```
+ :warning: Possible error: 400 code if any body parameter is missing or if length of cpp value is different from 9
 
 ### Confirm payment
 #### Request: ```GET /payments/confirm```
+#### Headers
+```js
+"pid": long int // payment id
 ```
-"paymentId": uuid as string
-```
-
 #### Response
-Possible error: 400 or 500 error code if payment id is invalid, missing or already confirmed
+When the payment is confirmed it is updated in the database
 ```
-None
+true  (payment is confirmed and UI received the signal)
+false (payment is confirmed but UI didn't get the signal)
 ```
-
-### Verify if payment is confirmed
-#### Request: ```GET /payments/isconfirmed```
-```
-"paymentId": uuid as string
-```
-
-#### Respose
-Possible error: 500 error code if payment id is missing <br>
-```
-true  (payment is confirmed)
-false (payment is not confirmed or invalid)
-```
+:warning: Possible error: 400 error code if pid is missing, doesn't exist or is already confirmed
 
