@@ -38,9 +38,11 @@ public class Payment {
         // TODO: Put this in a file
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary("KbPeShVmYq3t6w9z$C&F)H@McQfTjWnZ-KbPeShVmYq3t6w9z$C&F)H@McQfTjWnZ-KbPeShVmYq3t6w9z$C&F)H@McQfTjWnZ-KbPeShVmYq3t6w9z$C&F)H@McQfTjWnZ");
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
-        System.out.println("format: " + signingKey.getFormat());
-        System.out.println("encoded: " + Arrays.toString(signingKey.getEncoded()));
-        // TMP: return actual generated jwt
+
+        System.out.println(this.totalAmount);
+        System.out.println(this.company.getName());
+        System.out.println(this.company.getPhone());
+
         return Jwts.builder()
                         .setIssuedAt(Date.from(now))
                         .setExpiration(Date.from(now.plus(15, ChronoUnit.SECONDS)))

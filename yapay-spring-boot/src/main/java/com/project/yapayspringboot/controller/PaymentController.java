@@ -41,8 +41,9 @@ public class PaymentController {
         *  Throws exception if request body is missing any
         *  of the parameters: companyName, companyPhone, amount
         */
-
-        return newpayment.generateJwt();
+        String jwt = newpayment.generateJwt();
+        System.out.println(jwt);
+        return jwt;
     }
 
     @GetMapping("/payments/confirm")
