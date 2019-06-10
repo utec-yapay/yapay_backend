@@ -42,7 +42,6 @@ public class PaymentController {
         *  of the parameters: companyName, companyPhone, amount
         */
         String jwt = newpayment.generateJwt();
-        System.out.println(jwt);
         return jwt;
     }
 
@@ -73,9 +72,9 @@ public class PaymentController {
             emitters.get(paymentId)
                     .send(SseEmitter.event()
                             .name("yapay-confirm-payment")
-                            .data("Payment with id" + paymentId + " confirmed."));
+                            .data("Payment with id " + paymentId + " confirmed."));
             emitters.get(paymentId).complete();
-            System.out.println("Confirmation of payment with id: " + paymentId + "completed. Connection closed");
+            System.out.println("Confirmation of payment with id: " + paymentId + " completed. Connection closed");
             // Insert confirmed into db
             return true;
         } catch (IOException e) {
