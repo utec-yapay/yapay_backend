@@ -1,37 +1,55 @@
 package com.project.yapayspringboot.model;
 
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
+import java.security.Key;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+
 public class Payment {
     private Long id;
     private Company company;
     private Float totalAmount;
     private Boolean confirmed = false;
 
-    public Payment(String companyName, String companyPhone, Float amount) {
+    public Payment(@JsonProperty("cpn") String companyName,
+                   @JsonProperty("cpp") String companyPhone,
+                   @JsonProperty("amt") float amount) {
         /* This constructor is used when creating a
         *  new payment.
         *  The controller inserts the object to the
         *  database, which returns an id. Then, it
         * sets the payment id */
 
-        company = new Company(companyName, companyPhone);
-        totalAmount = amount;
+        this.company = new Company(companyName, companyPhone);
+        this.totalAmount = amount;
         confirmed = false;
     }
 
-    public Payment(String companyName, String companyPhone, Float amount, Boolean isconfirmed, Long paymentId) {
-        /* This constructor is used when creating a
-        * payment from the database */
-
-        company = new Company(companyName, companyPhone);
-        totalAmount = amount;
-        id = paymentId;
-        confirmed = isconfirmed;
-    }
-
     public String generateJwt(){
-        // TODO: Generate JWT
+        final Instant now = Instant.now();
 
-        return "";
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+        // TODO: Put this in a file
+        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary("KbPeShVmYq3t6w9z$C&F)H@McQfTjWnZ-KbPeShVmYq3t6w9z$C&F)H@McQfTjWnZ-KbPeShVmYq3t6w9z$C&F)H@McQfTjWnZ-KbPeShVmYq3t6w9z$C&F)H@McQfTjWnZ");
+        Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+
+        return Jwts.builder()
+                        .setIssuedAt(Date.from(now))
+                        .setExpiration(Date.from(now.plus(15, ChronoUnit.SECONDS)))
+                        .claim("pid", 123)
+                        .claim("amt", this.totalAmount)
+                        .claim("cpn", this.company.getName())
+                        .claim("cpp", this.company.getPhone())
+                        .signWith(signatureAlgorithm, signingKey)
+        .compact();
     }
 
 
@@ -42,6 +60,7 @@ public class Payment {
     }
 
     public void setId(Long id) { this.id = id; }
+    public void setConfirmed(boolean confirmed) { this.confirmed = confirmed; }
 
     public Float getTotalAmount() { return totalAmount; }
     public Company getCompany() { return company; }

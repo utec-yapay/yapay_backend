@@ -1,7 +1,5 @@
 package com.project.yapayspringboot.model;
 
-import java.util.UUID;
-
 public class Company {
     private String phone;
     private String name;
@@ -11,7 +9,7 @@ public class Company {
         this.phone = phoneNumber;
     }
 
-    public String getName() { return name; }
-    public String getPhone() { return phone;  }
+    public String getName() { return this.name; }
+    public String getPhone() { return this.phone;  }
 
 }

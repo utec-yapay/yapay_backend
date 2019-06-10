@@ -27,14 +27,17 @@ public class PaymentDao {
 
 
         return template.query("SELECT * FROM payments",
-                (rs, rowNum) ->
-                        new Payment(
-                                rs.getString("company_name"),
-                                rs.getString("company_phone"),
-                                rs.getFloat("total"),
-                                rs.getBoolean("confirmed"),
-                                rs.getLong("payment_id")
-        ));
+                (rs, rowNum) -> {
+                    Payment payment = new Payment(
+                            rs.getString("company_name"),
+                            rs.getString("company_phone"),
+                            rs.getFloat("total")
+                    );
+                    payment.setConfirmed(rs.getBoolean("confirmed"));
+                    payment.setId(rs.getLong("payment_id"));
+                    return payment;
+                }
+        );
         // Logger: .forEach(customer -> log.info(customer.toString()))
     }
 
@@ -68,13 +71,14 @@ public class PaymentDao {
         return template.queryForObject(
                 "SELECT * FROM payments WHERE payment_id = ?",
                 (rs, rowNum) -> {
-                    return new Payment(
+                     Payment payment = new Payment(
                             rs.getString("company_name"),
                             rs.getString("company_phone"),
-                            rs.getFloat("total"),
-                            rs.getBoolean("confirmed"),
-                            rs.getLong("payment_Id")
+                            rs.getFloat("total")
                     );
+                    payment.setConfirmed(rs.getBoolean("confirmed"));
+                    payment.setId(rs.getLong("payment_id"));
+                    return payment;
                 },
                 paymentId
         );
