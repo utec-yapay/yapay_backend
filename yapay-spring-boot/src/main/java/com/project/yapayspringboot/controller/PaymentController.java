@@ -1,8 +1,8 @@
 package com.project.yapayspringboot.controller;
 
-import com.project.yapayspringboot.dao.PaymentDao;
 import com.project.yapayspringboot.model.Payment;
 
+import com.project.yapayspringboot.service.PaymentService;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,11 +15,11 @@ public class PaymentController {
     // TODO: Error handling
 
     @Resource
-    PaymentDao paymentDao;
+    PaymentService paymentService;
 
     @GetMapping("/payments")
     public List<Payment> getAllPayments(){
-        return paymentDao.selectAllPayments();
+        return paymentService.getAllPayments();
     }
 
     @PostMapping("/payments")
@@ -45,7 +45,7 @@ public class PaymentController {
         }
 
 
-        Long id = paymentDao.insertPayment(newpayment);
+        Long id = paymentService.addPayment(newpayment);
         newpayment.setId(id);
 
         return newpayment.generateJwt();
@@ -64,18 +64,19 @@ public class PaymentController {
             throw new IllegalArgumentException("Missing Payment ID");
         }
 
+
         Payment paymentToConfirm;
         try {
-            paymentToConfirm = paymentDao.selectPaymentById(paymentId);
+            paymentToConfirm = paymentService.getPaymentById(paymentId);
         } catch (EmptyResultDataAccessException e){
-            throw new IllegalArgumentException("Payment with ID" + paymentId + " doesn't exist");
+            throw new IllegalArgumentException("Payment with ID " + paymentId + " doesn't exist");
         }
 
         if (!paymentToConfirm.confirm()){
             throw new IllegalArgumentException("Payment with ID " + paymentId + " is already confirmed");
         }
 
-        paymentDao.updatePayment(paymentToConfirm);
+        paymentService.updateConfirmation(paymentToConfirm);
     }
 
     @GetMapping("/payments/isconfirmed")
@@ -89,7 +90,7 @@ public class PaymentController {
 
         Payment paymentToVerify;
         try {
-            paymentToVerify = paymentDao.selectPaymentById(paymentId);
+            paymentToVerify = paymentService.getPaymentById(paymentId);
         }catch (EmptyResultDataAccessException e){
             throw new IllegalArgumentException("Payment with ID" + paymentId + " doesn't exist");
         }
