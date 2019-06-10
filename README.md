@@ -22,26 +22,26 @@ yapay@user:yapay-database$ psql yapay < YaPay_dump -U postgres
 
 Set PostgreSQL password
 ```console
-yapay@user:yapay-database$ cd ../yapay-spring-boot
-yapay@user:yapay-spring-boot$ password=<here-goes-postgres-password>       (don't include whitespaces)
-yapay@user:yapay-spring-boot$ sed -i "" "s/postgrespass/$password/" src/main/resources/application.properties
+$ cd ../yapay-spring-boot
+$ password=<here-goes-postgres-password>       (don't include whitespaces)
+$ sed -i "" "s/postgrespass/$password/" src/main/resources/application.properties
 ```
 
 Install Maven
 ```console
-yapay@user:yapay-spring-boot$ brew install maven (Mac OS)
-yapay@user:yapay-spring-boot$ sudo apt install maven (Ubuntu)
+$ brew install maven (Mac OS)
+$ sudo apt install maven (Ubuntu)
 ```
 
 Run SpringBoot with Maven
 ```console
-yapay@user:yapay-spring-boot$ mvn spring-boot:run
+$ mvn spring-boot:run
 ```
 
 Test
 ```console
-yapay@user:yapay-spring-boot$ curl http://localhost:8080/payments (MacOS)
-yapay@user:yapay-spring-boot$ wget http://localhost:8080/payments (Ubuntu)
+$ curl http://localhost:8080/payments (MacOS)
+$ wget http://localhost:8080/payments (Ubuntu)
 ```
 After running this commands, you should get a ```[]```
 
