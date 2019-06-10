@@ -43,8 +43,8 @@ public class Payment {
 
         return Jwts.builder()
                         .setIssuedAt(Date.from(now))
-                        .setExpiration(Date.from(now.plus(15, ChronoUnit.SECONDS)))
-                        .claim("pid", 123)
+                        .setExpiration(Date.from(now.plus(60, ChronoUnit.SECONDS)))
+                        .claim("pid", this.id)
                         .claim("amt", this.totalAmount)
                         .claim("cpn", this.company.getName())
                         .claim("cpp", this.company.getPhone())

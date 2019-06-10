@@ -28,7 +28,7 @@ public class PaymentController {
 
     @RequestMapping("/confirmEvent/{id}")
     public SseEmitter confirmEvent(@PathVariable(value="id") Long id) {
-        long timeout = 10000L;
+        long timeout = 60000L;
         SseEmitter sseEmitter = new SseEmitter(timeout); // 15s
         emitters.put(id, sseEmitter);
         System.out.println("Connection established with client. Now processing payment with id: " + id +
