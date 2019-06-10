@@ -2,15 +2,33 @@
 This repository contains the Yapay backend made with SpringBoot
 
 ## Run project
-Requirement: Java <br>
-Install Maven and run SpringBoot
+Tested with Java 1.8.0_202 and PostgreSQL 10.8<br>
+#### Requirements:
+* Java
+* Postgresql
+
+Clone repository
+```
+$ git clone git@github.com:utec-yapay/yapay_backend.git
+$ cd yapay_backend
+```
+
+Create PostgreSQL database and restore from dump 
+```
+$ createdb yapay -U postgres
+$ cd yapay-database
+$ psql yapay < YaPay_dump -U postgres
+```
+
+Install Maven
 ```
 $ brew install maven (Mac OS)
 $ sudo apt install maven (Ubuntu)
 ```
+
 Run SpringBoot with Maven
 ```
-$ cd yapay_backend/yapay-spring-boot
+$ cd ../yapay_backend/yapay-spring-boot
 $ mvn spring-boot:run
 ```
 
