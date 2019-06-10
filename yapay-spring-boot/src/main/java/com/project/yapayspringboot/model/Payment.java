@@ -1,5 +1,16 @@
 package com.project.yapayspringboot.model;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
+
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
+import java.io.UnsupportedEncodingException;
+import java.security.Key;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.UUID;
 
 public class Payment {
@@ -17,9 +28,23 @@ public class Payment {
 
     public String generateJwt(){
         // TODO: Generate JWT
+        final Instant now = Instant.now();
+
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary("secret");
+        Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
         // TMP: return actual generated jwt
-        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaWQiOjEyMywiYW10IjoxMDAsImNwbiI6ImRyaW1lciIsImNwcCI6Ijk5MzMyMTMyMyJ9.UvkMYjH0rUxeCSdlQnxkZqma6QO0Gkb49N7cE92UnQ8";
+        return Jwts.builder()
+                        .setIssuedAt(Date.from(now))
+                        .setExpiration(Date.from(now.plus(15, ChronoUnit.SECONDS)))
+                        .claim("pid", this.id)
+                        .claim("amt", this.totalAmount)
+                        .claim("cpn", this.company.getName())
+                        .claim("cpp", this.company.getPhone())
+                        .signWith(signatureAlgorithm, signingKey)
+        .compact();
     }
 
     public boolean confirm(){
