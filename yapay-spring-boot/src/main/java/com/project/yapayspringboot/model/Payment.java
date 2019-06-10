@@ -6,6 +6,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 import javax.crypto.spec.SecretKeySpec;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
 import java.time.Instant;
@@ -14,7 +16,10 @@ import java.util.Date;
 
 public class Payment {
     private Long id;
+    @NotNull
+    @Valid
     private Company company;
+    @NotNull
     private Float totalAmount;
     private Boolean confirmed = false;
 

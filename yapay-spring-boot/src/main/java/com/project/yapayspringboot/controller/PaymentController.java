@@ -4,10 +4,13 @@ import com.project.yapayspringboot.model.Payment;
 
 import com.project.yapayspringboot.service.PaymentService;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.List;
 import java.io.IOException;
 import java.util.HashMap;
@@ -16,14 +19,14 @@ import java.util.HashMap;
 @CrossOrigin
 public class PaymentController {
     private HashMap<Long, SseEmitter> emitters = new HashMap<>();
-    // TODO: Error handling
+    // TODO: Error handling for socket
 
     @Resource
     PaymentService paymentService;
 
     @GetMapping("/payments")
-    public List<Payment> getAllPayments(){
-        return paymentService.getAllPayments();
+    public ResponseEntity<List<Payment>> getAllPayments(){
+        return new ResponseEntity<>(paymentService.getAllPayments(), HttpStatus.OK);
     }
 
     @RequestMapping("/confirmEvent/{id}")
@@ -38,8 +41,7 @@ public class PaymentController {
     }
 
     @PostMapping("/payments")
-    public String createPayment(@RequestBody Payment newpayment){
-        // TODO: Valid request body
+    public ResponseEntity<String> createPayment(@Valid @RequestBody Payment newpayment){
 
         /* Creates payment and returns the JSON
          *  Web Token (JWT) that will be use to
@@ -55,11 +57,11 @@ public class PaymentController {
         Long id = paymentService.addPayment(newpayment);
         newpayment.setId(id);
 
-        return newpayment.generateJwt();
+        return new ResponseEntity<>(newpayment.generateJwt(), HttpStatus.OK);
     }
 
     @GetMapping("/payments/confirm")
-    public synchronized Boolean confirmPayment(@RequestHeader("paymentId") Long paymentId) throws IllegalArgumentException{
+    public synchronized ResponseEntity confirmPayment(@RequestHeader("pid") Long paymentId){
 
         /* Confirms payment with id paymentId and
          * inserts payment to database. Sends signal
@@ -71,7 +73,7 @@ public class PaymentController {
 
 
         if (paymentId==null){
-            throw new IllegalArgumentException("Missing Payment ID");
+            return new ResponseEntity<>("Missing Payment ID", HttpStatus.BAD_REQUEST);
         }
 
         Payment paymentToConfirm;
@@ -80,12 +82,25 @@ public class PaymentController {
         try {
             paymentToConfirm = paymentService.getPaymentById(paymentId);
         } catch (EmptyResultDataAccessException e){
-            throw new IllegalArgumentException("Payment with ID " + paymentId + " doesn't exist");
+            return new ResponseEntity<>("Payment with ID " + paymentId + " doesn't exist", HttpStatus.BAD_REQUEST);
         }
+
+
 
         // Verify if payment was already confirmed and change paymentToConfirm.confirmed
         if (!paymentToConfirm.confirm()){
-            throw new IllegalArgumentException("Payment with ID " + paymentId + " is already confirmed");
+            try {
+                emitters.get(paymentId)
+                        .send(SseEmitter.event()
+                                .name("yapay-confirm-payment")
+                                .data("Payment with id " + paymentId + " confirmed."));
+                emitters.get(paymentId).complete();
+                System.out.println("Confirmation of payment with id: " + paymentId + " completed. Connection closed");
+                return new ResponseEntity<>("Payment with ID " + paymentId + " is already confirmed", HttpStatus.BAD_REQUEST);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return new ResponseEntity<>("Payment with ID " + paymentId + " is already confirmed", HttpStatus.BAD_REQUEST);
+            }
         }
 
         // Insert confirmed into db
@@ -99,12 +114,12 @@ public class PaymentController {
                             .data("Payment with id " + paymentId + " confirmed."));
             emitters.get(paymentId).complete();
             System.out.println("Confirmation of payment with id: " + paymentId + " completed. Connection closed");
-            return true;
+            return new ResponseEntity<>(true, HttpStatus.OK);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return false;
+        return new ResponseEntity<>(false, HttpStatus.OK);
 
     }
 
