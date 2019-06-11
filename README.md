@@ -9,15 +9,16 @@ Tested with Java 1.8.0_202 and PostgreSQL 10.8<br>
 
 Clone repository
 ```console
-yapay@user:dir$ git clone git@github.com:utec-yapay/yapay_backend.git
-yapay@user:dir$ cd yapay_backend
+$ git clone git@github.com:utec-yapay/yapay_backend.git
+$ cd yapay_backend
 ```
 
-Create PostgreSQL database and restore from dump 
+Make sure PostgreSQL is running (there should be some active processes named "postgres")
+Create PostgreSQL database and restore from dump
 ```console
-yapay@user:yapay_backend$ createdb yapay -U postgres
-yapay@user:yapay-database$ cd yapay-database
-yapay@user:yapay-database$ psql yapay < YaPay_dump -U postgres
+$ createdb yapay -U postgres
+$ cd yapay-database
+$ psql yapay < YaPay_dump -U postgres
 ```
 
 Set PostgreSQL password
