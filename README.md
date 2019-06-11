@@ -48,12 +48,6 @@ After running this commands, you should get a ```[]```
 
 
 ## API Endpoints
-This endpoints don't apply to current commit. To get this results...
-```
-$ git checkout c1f6004418ee7fbb10f22c618f1e2c74934090a4
-```
-
-
 ### List payments
 #### Request ```GET /payments```
 #### Response
