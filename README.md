@@ -2,65 +2,104 @@
 This repository contains the Yapay backend made with SpringBoot
 
 ## Run project
-Requirement: Java <br>
-Install Maven and run SpringBoot
+Tested with Java 1.8.0_202 and PostgreSQL 10.8<br>
+#### Requirements:
+* Java
+* PostgreSQL
+
+Clone repository
+```console
+$ git clone git@github.com:utec-yapay/yapay_backend.git
+$ cd yapay_backend
 ```
+
+Make sure PostgreSQL is running (there should be some active processes named "postgres")
+Create PostgreSQL database and restore from dump
+```console
+$ createdb yapay -U postgres
+$ cd yapay-database
+$ psql yapay < YaPay_dump -U postgres
+```
+
+Set PostgreSQL password
+```console
+$ cd ../yapay-spring-boot
+$ password=<here-goes-postgres-password>       (don't include whitespaces)
+$ sed -i "" "s/postgrespass/$password/" src/main/resources/application.properties
+```
+
+Install Maven
+```console
 $ brew install maven (Mac OS)
 $ sudo apt install maven (Ubuntu)
 ```
+
 Run SpringBoot with Maven
-```
-$ cd yapay_backend/yapay-spring-boot
+```console
 $ mvn spring-boot:run
 ```
 
-## API Endpoints
-Current commit isn't working. To get this results...
+Test
+```console
+$ curl http://localhost:8080/payments (MacOS)
+$ wget http://localhost:8080/payments (Ubuntu)
 ```
-$ git checkout c1f6004418ee7fbb10f22c618f1e2c74934090a4
+After running this commands, you should get a ```[]```
+
+
+## API Endpoints
+### List payments
+#### Request ```GET /payments```
+#### Response
+List of payments
+```js
+[
+  {
+    "id": long int,
+    "company": {
+        "phone": string with 9 chars,
+        "name": string
+    },
+    "totalAmount": float,
+    "confirmed": boolean
+  },
+  ...
+]
 ```
 
 ### Create payment
 #### Request: ```POST /payments```
-#### Request Body: 
+#### Request Body:
 ```js
 {
-  "amount":       float,
-  "companyName":  string,
-  "companyPhone": string
+  "amt": float,              // payment amount
+  "cpn": string,             // company name
+  "cpp": string with 9 chars // company phone
 }
  ```
  #### Response
-Possible error: 400 or 500 error code if any body parameter is missing
  ```js
+plain JSON Web Token with a payload of:
 {
-  "id":      uuid as string,
-  "qrData":  base64 encoded png
+  "pid": long int,          // payment id
+  "amt": float,             // payment amount
+  "cpn": string,            // company name
+  "cpp" string with 9 chars // company phone
 }
  ```
+ :warning: Possible error: 400 code if any body parameter is missing or if length of cpp value is different from 9
 
 ### Confirm payment
 #### Request: ```GET /payments/confirm```
+#### Headers
+```js
+"pid": long int // payment id
 ```
-"paymentId": uuid as string
-```
-
 #### Response
-Possible error: 400 or 500 error code if payment id is invalid, missing or already confirmed
+When the payment is confirmed it is updated in the database
 ```
-None
+true  (payment is confirmed and UI received the signal)
+false (payment is confirmed but UI didn't get the signal)
 ```
-
-### Verify if payment is confirmed
-#### Request: ```GET /payments/isconfirmed```
-```
-"paymentId": uuid as string
-```
-
-#### Respose
-Possible error: 500 error code if payment id is missing <br>
-```
-true  (payment is confirmed)
-false (payment is not confirmed or invalid)
-```
+:warning: Possible error: 400 error code if pid is missing, doesn't exist or is already confirmed
 

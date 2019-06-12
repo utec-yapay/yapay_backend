@@ -9,20 +9,30 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.UnsupportedEncodingException;
 import java.time.Instant;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 public class Payment {
     private Long id;
+    @NotNull
+    @Valid
     private Company company;
-    private float totalAmount;
-    private boolean confirmed = false;
+    @NotNull
+    private Float totalAmount;
+    private Boolean confirmed = false;
 
     public Payment(@JsonProperty("cpn") String companyName,
                    @JsonProperty("cpp") String companyPhone,
                    @JsonProperty("amt") float amount) {
+        /* This constructor is used when creating a
+        *  new payment.
+        *  The controller inserts the object to the
+        *  database, which returns an id. Then, it
+        * sets the payment id */
+
         this.company = new Company(companyName, companyPhone);
         this.totalAmount = amount;
-        // TODO: Add to database
-        // id = id in data base
+        confirmed = false;
     }
 
     public String generateJwt(){
@@ -61,16 +71,20 @@ public class Payment {
         return token;
     }
 
-    public boolean confirm(){
+
+
+    public Boolean confirm(){
         if (confirmed) return false;
-        confirmed = true;
-
-        // TODO: Find payment in database and update confirmed attribute
-
-
-        return true;
+        return confirmed = true;
     }
 
+    public void setId(Long id) { this.id = id; }
+    public void setConfirmed(boolean confirmed) { this.confirmed = confirmed; }
+
+    public Float getTotalAmount() { return totalAmount; }
+    public Company getCompany() { return company; }
     public Long getId(){ return id; }
-    public boolean isConfirmed() { return confirmed; }
+    public Boolean isConfirmed() { return confirmed; }
+
+
 }
