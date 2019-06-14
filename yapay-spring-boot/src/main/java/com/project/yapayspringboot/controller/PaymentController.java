@@ -17,8 +17,6 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
 @RestController
 // @CrossOrigin // Must be a specific address in production
 public class PaymentController {
@@ -35,7 +33,7 @@ public class PaymentController {
         return new ResponseEntity<>(paymentService.getAllPayments(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/confirmEvent/{id}", method = GET)
+    @GetMapping("/confirmEvent/{id}")
     public SseEmitter confirmEvent(@PathVariable(value="id") Long id) {
         logger.log(Level.INFO, () -> "Request made to /confirmEvent/" + id);
         long timeout = 60000L;

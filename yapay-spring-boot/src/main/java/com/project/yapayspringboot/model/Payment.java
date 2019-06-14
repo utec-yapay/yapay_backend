@@ -4,7 +4,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.UnsupportedEncodingException;
@@ -40,8 +39,6 @@ public class Payment {
     }
 
     public String generateJwt(){
-        final Instant now = Instant.now();
-
         String secret = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
         String token = "";
 
@@ -65,8 +62,7 @@ public class Payment {
 
         try {
 
-            JWTVerifier verifier = JWT.require(algorithm)
-                    .build(); //Reusable verifier instance
+            JWT.require(algorithm).build(); //Reusable verifier instance
             logger.log(Level.FINE, "Valid JWT");
         } catch (JWTVerificationException exception){
             logger.log(Level.SEVERE, "Invalid JWT");
@@ -74,7 +70,7 @@ public class Payment {
 
         return token;
     }
-    
+
 
     public Boolean confirm(){
         if (confirmed) return false;
