@@ -103,3 +103,15 @@ false (payment is confirmed but UI didn't get the signal)
 ```
 :warning: Possible error: 400 error code if pid is missing, doesn't exist or is already confirmed
 
+### SonarCloud Badges
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=yapay_spring_boot&metric=alert_status)](https://sonarcloud.io/dashboard?id=yapay_spring_boot)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=yapay_spring_boot&metric=bugs)](https://sonarcloud.io/dashboard?id=yapay_spring_boot)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=yapay_spring_boot&metric=code_smells)](https://sonarcloud.io/dashboard?id=yapay_spring_boot)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=yapay_spring_boot&metric=coverage)](https://sonarcloud.io/dashboard?id=yapay_spring_boot)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=yapay_spring_boot&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=yapay_spring_boot)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=yapay_spring_boot&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=yapay_spring_boot)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=yapay_spring_boot&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=yapay_spring_boot)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=yapay_spring_boot&metric=security_rating)](https://sonarcloud.io/dashboard?id=yapay_spring_boot)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=yapay_spring_boot&metric=sqale_index)](https://sonarcloud.io/dashboard?id=yapay_spring_boot)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=yapay_spring_boot&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=yapay_spring_boot)
+
