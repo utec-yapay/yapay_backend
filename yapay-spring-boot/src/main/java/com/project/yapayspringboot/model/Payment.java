@@ -1,13 +1,11 @@
 package com.project.yapayspringboot.model;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.UnsupportedEncodingException;
-import java.time.Instant;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.validation.Valid;
