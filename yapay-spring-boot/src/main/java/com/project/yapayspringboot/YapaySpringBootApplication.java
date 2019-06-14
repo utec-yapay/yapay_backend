@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class YapaySpringBootApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(YapaySpringBootApplication.class, args);
+    public static void main() {
+        SpringApplication.run(YapaySpringBootApplication.class);
     }
 
 }

@@ -14,10 +14,14 @@ import javax.validation.Valid;
 import java.util.List;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RestController
-@CrossOrigin
+// @CrossOrigin // Must be a specific address in production
 public class PaymentController {
+    private static final Logger logger = Logger.getLogger(PaymentController.class.getName());
+
     private HashMap<Long, SseEmitter> emitters = new HashMap<>();
     // TODO: Error handling for socket
 
@@ -26,16 +30,18 @@ public class PaymentController {
 
     @GetMapping("/payments")
     public ResponseEntity<List<Payment>> getAllPayments(){
+        logger.log(Level.INFO, "Get request made to /payments");
         return new ResponseEntity<>(paymentService.getAllPayments(), HttpStatus.OK);
     }
 
     @RequestMapping("/confirmEvent/{id}")
     public SseEmitter confirmEvent(@PathVariable(value="id") Long id) {
+        logger.log(Level.INFO, "Request made to /confirmEvent/" + id);
         long timeout = 60000L;
         SseEmitter sseEmitter = new SseEmitter(timeout); // 15s
         emitters.put(id, sseEmitter);
-        System.out.println("Connection established with client. Now processing payment with id: " + id +
-                ". Time remaining: " + (timeout/1000) + " secs");
+        logger.log(Level.FINE, "Connection established with client. Now processing payment with id: " + id +
+                        ". Time remaining: " + (timeout/1000) + " secs");
         sseEmitter.onCompletion(() -> emitters.remove(id));
         return sseEmitter;
     }
@@ -53,9 +59,11 @@ public class PaymentController {
          *  Throws exception if request body is missing any
          *  of the parameters: companyName, companyPhone, amount
          */
-
+        logger.log(Level.INFO, "POST request made to /payments");
+        logger.log(Level.INFO, "Adding payment to database. Payment = " + newpayment);
         Long id = paymentService.addPayment(newpayment);
         newpayment.setId(id);
+        logger.log(Level.FINE, "Payment added to database with id = " + id);
 
         return new ResponseEntity<>(newpayment.generateJwt(), HttpStatus.OK);
     }
@@ -71,8 +79,9 @@ public class PaymentController {
          * specified, doesn't exist or is already
          * confirmed  */
 
-
+        logger.log(Level.INFO, "GET request made to /payments/confirm");
         if (paymentId==null){
+            logger.log(Level.SEVERE, "Payment Id received in /payments/confirm is NULL");
             return new ResponseEntity<>("Missing Payment ID", HttpStatus.BAD_REQUEST);
         }
 
@@ -82,7 +91,7 @@ public class PaymentController {
         try {
             paymentToConfirm = paymentService.getPaymentById(paymentId);
         } catch (EmptyResultDataAccessException e){
-            return new ResponseEntity<>("Payment with ID " + paymentId + " doesn't exist", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Payment ID doesn't exist", HttpStatus.BAD_REQUEST);
         }
 
 
@@ -95,11 +104,11 @@ public class PaymentController {
                                 .name("yapay-confirm-payment")
                                 .data("Payment with id " + paymentId + " confirmed."));
                 emitters.get(paymentId).complete();
-                System.out.println("Confirmation of payment with id: " + paymentId + " completed. Connection closed");
-                return new ResponseEntity<>("Payment with ID " + paymentId + " is already confirmed", HttpStatus.BAD_REQUEST);
+                logger.log(Level.FINE, "Confirmation of payment with id: " + paymentId + " is completed. Connection closed");
+                return new ResponseEntity<>("Payment is already confirmed", HttpStatus.BAD_REQUEST);
             } catch (IOException e) {
-                e.printStackTrace();
-                return new ResponseEntity<>("Payment with ID " + paymentId + " is already confirmed", HttpStatus.BAD_REQUEST);
+                logger.log(Level.SEVERE, e.getMessage(), e);
+                return new ResponseEntity<>("Payment is already confirmed", HttpStatus.BAD_REQUEST);
             }
         }
 
@@ -122,28 +131,4 @@ public class PaymentController {
         return new ResponseEntity<>(false, HttpStatus.OK);
 
     }
-
-    /*
-    DEPRECATED
-
-    @GetMapping("/payments/isconfirmed")
-    public Boolean isconfirmPayment(@RequestHeader("paymentId") Long paymentId) throws IllegalArgumentException{
-//        Throws exception if payment ID wasn't
-//         specified or doesn't exist
-
-        if (paymentId==null) {
-            throw new IllegalArgumentException("Missing Payment ID");
-        }
-
-        Payment paymentToVerify;
-        try {
-            paymentToVerify = paymentService.getPaymentById(paymentId);
-        }catch (EmptyResultDataAccessException e){
-            throw new IllegalArgumentException("Payment with ID" + paymentId + " doesn't exist");
-        }
-
-        return true; //paymentToVerify.isConfirmed();
-    }
-
-     */
 }
