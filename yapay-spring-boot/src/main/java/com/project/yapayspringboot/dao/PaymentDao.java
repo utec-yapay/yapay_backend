@@ -14,7 +14,6 @@ import java.util.Map;
 
 @Repository
 public class PaymentDao {
-    // TODO: Log each action
     public PaymentDao(JdbcTemplate template) {
         this.template = template;
     }
@@ -65,7 +64,7 @@ public class PaymentDao {
         return keyHolder.getKeys();
     }
 
-    public Payment selectPaymentById(Long paymentId) throws EmptyResultDataAccessException{
+    public Payment selectPaymentById(Long paymentId){
         /* Returns payment with id paymentId */
 
         return template.queryForObject(
@@ -84,7 +83,7 @@ public class PaymentDao {
         );
     }
 
-    public void updatePayment(Payment payment) throws EmptyResultDataAccessException{
+    public void updatePayment(Payment payment){
         /* Updates all columns of payment */
 
         template.update(

@@ -9,10 +9,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.UnsupportedEncodingException;
 import java.time.Instant;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 public class Payment {
+    private static final Logger logger = Logger.getLogger(Payment.class.getName());
+
     private Long id;
     @NotNull
     @Valid
@@ -38,7 +42,6 @@ public class Payment {
     public String generateJwt(){
         final Instant now = Instant.now();
 
-        // TODO: Put this in a file
         String secret = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
         String token = "";
 
@@ -50,32 +53,33 @@ public class Payment {
                 .withClaim("cpp", "993321323")
                 .sign(algorithmHS);
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage(), e);
+        }
+
+        Algorithm algorithm = null;
+        try {
+            algorithm = Algorithm.HMAC256(secret);
+        } catch (UnsupportedEncodingException e) {
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
 
         try {
-            Algorithm algorithm = null;
-            try {
-                algorithm = Algorithm.HMAC256(secret);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+
             JWTVerifier verifier = JWT.require(algorithm)
                     .build(); //Reusable verifier instance
-            DecodedJWT jwt = verifier.verify(token);
-            System.out.println("VALID JWT");
+            logger.log(Level.FINE, "Valid JWT");
         } catch (JWTVerificationException exception){
-            System.out.println("INVALID JWT");
+            logger.log(Level.SEVERE, "Invalid JWT");
         }
 
         return token;
     }
-
-
+    
 
     public Boolean confirm(){
         if (confirmed) return false;
-        return confirmed = true;
+        confirmed = true;
+        return confirmed;
     }
 
     public void setId(Long id) { this.id = id; }

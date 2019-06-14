@@ -17,13 +17,14 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
 @RestController
 // @CrossOrigin // Must be a specific address in production
 public class PaymentController {
     private static final Logger logger = Logger.getLogger(PaymentController.class.getName());
 
     private HashMap<Long, SseEmitter> emitters = new HashMap<>();
-    // TODO: Error handling for socket
 
     @Resource
     PaymentService paymentService;
@@ -34,7 +35,7 @@ public class PaymentController {
         return new ResponseEntity<>(paymentService.getAllPayments(), HttpStatus.OK);
     }
 
-    @RequestMapping("/confirmEvent/{id}")
+    @RequestMapping(value = "/confirmEvent/{id}", method = GET)
     public SseEmitter confirmEvent(@PathVariable(value="id") Long id) {
         logger.log(Level.INFO, () -> "Request made to /confirmEvent/" + id);
         long timeout = 60000L;
@@ -122,10 +123,10 @@ public class PaymentController {
                             .name("yapay-confirm-payment")
                             .data("Payment with id " + paymentId + " confirmed."));
             emitters.get(paymentId).complete();
-            System.out.println("Confirmation of payment with id: " + paymentId + " completed. Connection closed");
+            logger.log(Level.FINE, () -> "Confirmation of payment with id: " + paymentId + " is completed. Connection closed");
             return new ResponseEntity<>(true, HttpStatus.OK);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return new ResponseEntity<>(false, HttpStatus.OK);
