@@ -1,6 +1,7 @@
 package com.project.yapayspringboot.model;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -37,7 +38,7 @@ public class Payment {
     }
 
     public String generateJwt(){
-        String secret = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+        String secret = "2r5u8x/A?D(G-KaPdSgVkYp3s6v9y$B&";
         String token = "";
 
         try {
@@ -59,8 +60,8 @@ public class Payment {
         }
 
         try {
-
-            JWT.require(algorithm).build(); //Reusable verifier instance
+            JWTVerifier verifier = JWT.require(algorithm).build(); //Reusable verifier instance
+            verifier.verify(token);
             logger.log(Level.FINE, "Valid JWT");
         } catch (JWTVerificationException exception){
             logger.log(Level.SEVERE, "Invalid JWT");
