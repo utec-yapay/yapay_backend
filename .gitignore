@@ -1,6 +1,9 @@
 */target/
 !.mvn/wrapper/maven-wrapper.jar
+
+### Logs ###
 *.log
+*.log.*.gz
 
 ### STS ###
 .apt_generated
