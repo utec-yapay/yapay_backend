@@ -18,7 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @RestController
-// @CrossOrigin // Must be a specific address in production
+@CrossOrigin // Must be a specific address in production
 public class PaymentController {
     private static final Logger logger = Logger.getLogger(PaymentController.class.getName());
 
@@ -128,6 +128,33 @@ public class PaymentController {
         }
 
         return new ResponseEntity<>(false, HttpStatus.OK);
+    }
+
+    @GetMapping("/payments/jwt")
+    public synchronized ResponseEntity<String> generateUnexpiredJwt(@RequestHeader("pid") Long paymentId){
+        /* Generates a JWT for a payment with a given
+         * paymentId.
+         *
+         * Used when a JWT has expired and another JWT
+         * is needed
+         *
+         * Throws exception if payment ID wasn't
+         * specified or doesn't exist */
+
+        if (paymentId==null){
+            return new ResponseEntity<>("Missing Payment ID", HttpStatus.BAD_REQUEST);
+        }
+
+        Payment paymentToJwt;
+
+        // Gets payment with id payment id from database
+        try {
+            paymentToJwt = paymentService.getPaymentById(paymentId);
+        } catch (EmptyResultDataAccessException e){
+            return new ResponseEntity<>("Payment ID doesn't exist", HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(paymentToJwt.generateJwt(), HttpStatus.OK);
 
     }
 }
