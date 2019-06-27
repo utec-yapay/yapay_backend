@@ -1,5 +1,6 @@
 package com.project.yapayspringboot.controller;
 
+import com.auth0.jwt.JWT;
 import com.project.yapayspringboot.model.Payment;
 
 import com.project.yapayspringboot.service.PaymentService;
@@ -68,7 +69,7 @@ public class PaymentController {
     }
 
     @GetMapping("/payments/confirm")
-    public synchronized ResponseEntity confirmPayment(@RequestHeader("pid") Long paymentId){
+    public synchronized ResponseEntity confirmPayment(@RequestHeader("pid") String paymentIdJwt){
 
         /* Confirms payment with id paymentId and
          * inserts payment to database. Sends signal
@@ -79,10 +80,16 @@ public class PaymentController {
          * confirmed  */
 
         logger.log(Level.INFO, () -> "GET request made to /payments/confirm");
-        if (paymentId==null){
+        if (paymentIdJwt==null){
             logger.log(Level.SEVERE, () -> "Payment Id received in /payments/confirm is NULL");
-            return new ResponseEntity<>("Missing Payment ID", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Missing JWT Payment ID", HttpStatus.BAD_REQUEST);
         }
+
+        if (!Payment.validateJwt(paymentIdJwt)){
+            return new ResponseEntity<>("JWT is expired", HttpStatus.BAD_REQUEST);
+        }
+
+        Long paymentId = JWT.decode(paymentIdJwt).getClaim("pid").asLong();
 
         Payment paymentToConfirm;
 

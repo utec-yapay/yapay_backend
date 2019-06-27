@@ -24,6 +24,7 @@ public class Payment {
     @NotNull
     private Float totalAmount;
     private Boolean confirmed = false;
+    static Algorithm algorithm;
 
     public Payment(@JsonProperty("cpn") String companyName,
                    @JsonProperty("cpp") String companyPhone,
@@ -37,42 +38,40 @@ public class Payment {
         this.company = new Company(companyName, companyPhone);
         this.totalAmount = amount;
         confirmed = false;
+
+        // Generate JWT algorithm
+        try {
+            String jwtSecret = "2r5u8x/A?D(G-KaPdSgVkYp3s6v9y$B&";
+            algorithm = Algorithm.HMAC256(jwtSecret);
+        } catch (UnsupportedEncodingException e) {
+            logger.log(Level.SEVERE, e.getMessage(), e);
+        }
     }
 
-    public String generateJwt(){
-        String secret = "2r5u8x/A?D(G-KaPdSgVkYp3s6v9y$B&";
-        String token = "";
-
-        try {
-            Algorithm algorithmHS = Algorithm.HMAC256(secret);
-
-            Calendar inOneMin = Calendar.getInstance();
-            inOneMin.add(Calendar.MINUTE, 1);
-
-            token = JWT.create()
-                .withClaim("pid", 123)
-                .withClaim("cpn", "Drimer")
-                .withClaim("cpp", "993321323")
-                .withExpiresAt(inOneMin.getTime())
-                .sign(algorithmHS);
-        } catch (UnsupportedEncodingException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
-        }
-
-        Algorithm algorithm = null;
-        try {
-            algorithm = Algorithm.HMAC256(secret);
-        } catch (UnsupportedEncodingException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
-        }
-
+    public static Boolean validateJwt(String token){
         try {
             JWTVerifier verifier = JWT.require(algorithm).build(); //Reusable verifier instance
             verifier.verify(token);
-            logger.log(Level.FINE, "Valid JWT");
+            logger.log(Level.FINER, "Valid JWT");
         } catch (JWTVerificationException exception){
-            logger.log(Level.SEVERE, "Invalid JWT");
+            logger.log(Level.FINER, "Invalid JWT");
+            return false;
         }
+        return true;
+    }
+
+    public String generateJwt(){
+        String token = "";
+
+        Calendar inOneMin = Calendar.getInstance();
+        inOneMin.add(Calendar.MINUTE, 1);
+
+        token = JWT.create()
+            .withClaim("pid", this.id)
+            .withClaim("cpn", this.company.getName())
+            .withClaim("cpp", this.company.getPhone())
+            .withExpiresAt(inOneMin.getTime())
+            .sign(algorithm);
 
         return token;
     }
