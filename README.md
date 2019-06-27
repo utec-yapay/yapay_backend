@@ -27,6 +27,8 @@ $ cd ../yapay-spring-boot
 $ password=<here-goes-postgres-password>       (don't include whitespaces)
 $ sed -i "" "s/postgrespass/$password/" src/main/resources/application.properties
 ```
+If you get an error about failed postgres authentication, it means that the password wasn't set up correctly.
+Go to ```yapay-spring-boot/src/main/resources/application.properties``` and change the field ```spring.datasource.password```
 
 Install Maven
 ```console
