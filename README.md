@@ -103,6 +103,20 @@ false (payment is confirmed but UI didn't get the signal)
 ```
 :warning: Possible error: 400 error code if pid is missing, doesn't exist or is already confirmed
 
+### Get new JWT for existing payment
+If your JWT is expired, you're going to need another one
+#### Request: ```GET /payments/jwt```
+#### Headers
+```js
+"pid": long int // payment id
+```
+#### Response
+```js
+plain String with JWT
+```
+:warning: Possible error: 400 error code if pid is missing or doesn't exist
+
+
 ### SonarCloud
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=yapay_spring_boot&metric=alert_status)](https://sonarcloud.io/dashboard?id=yapay_spring_boot)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=yapay_spring_boot&metric=bugs)](https://sonarcloud.io/dashboard?id=yapay_spring_boot)
