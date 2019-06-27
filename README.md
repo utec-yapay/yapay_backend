@@ -79,13 +79,14 @@ List of payments
  ```
  #### Response
  ```js
-plain JSON Web Token with a payload of:
+plain JSON Web Token string with a payload of:
 {
   "pid": long int,          // payment id
   "amt": float,             // payment amount
   "cpn": string,            // company name
   "cpp" string with 9 chars // company phone
 }
+and expiration (of 1 minute) in header
  ```
  :warning: Possible error: 400 code if any body parameter is missing or if length of cpp value is different from 9
 
@@ -111,8 +112,15 @@ If your JWT is expired, you're going to need another one
 "pid": long int // payment id
 ```
 #### Response
-```js
-plain String with JWT
+```
+plain JSON Web Token string with a payload of:
+{
+  "pid": long int,          // payment id
+  "amt": float,             // payment amount
+  "cpn": string,            // company name
+  "cpp" string with 9 chars // company phone
+}
+and expiration (of 1 minute) in header
 ```
 :warning: Possible error: 400 error code if pid is missing or doesn't exist
 
@@ -130,4 +138,3 @@ plain String with JWT
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=yapay_spring_boot&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=yapay_spring_boot)
 
 https://sonarcloud.io/dashboard?id=yapay_spring_boot
-
