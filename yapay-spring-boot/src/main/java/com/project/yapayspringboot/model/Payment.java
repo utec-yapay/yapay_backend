@@ -7,6 +7,8 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.validation.Valid;
@@ -43,10 +45,15 @@ public class Payment {
 
         try {
             Algorithm algorithmHS = Algorithm.HMAC256(secret);
+
+            Calendar inOneMin = Calendar.getInstance();
+            inOneMin.add(Calendar.MINUTE, 1);
+
             token = JWT.create()
                 .withClaim("pid", 123)
                 .withClaim("cpn", "Drimer")
                 .withClaim("cpp", "993321323")
+                .withExpiresAt(inOneMin.getTime())
                 .sign(algorithmHS);
         } catch (UnsupportedEncodingException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
