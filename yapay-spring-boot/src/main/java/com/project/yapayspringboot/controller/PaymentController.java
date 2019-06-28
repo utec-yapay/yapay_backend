@@ -2,9 +2,12 @@ package com.project.yapayspringboot.controller;
 import com.project.yapayspringboot.model.Payment;
 
 import com.project.yapayspringboot.service.PaymentService;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -158,5 +161,16 @@ public class PaymentController {
 
         return new ResponseEntity<>(paymentToJwt.generateJwt(), HttpStatus.OK);
 
+    }
+
+    @GetMapping("/imgs/{image}")
+    public synchronized ResponseEntity<byte[]> getImage(@PathVariable(value="image") String image) throws IOException {
+        ClassPathResource imgFile = new ClassPathResource("images/" + image);
+        byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
+
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(bytes);
     }
 }
