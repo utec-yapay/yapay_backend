@@ -30,7 +30,7 @@ public class PaymentDao {
             payment = new Payment(
                     rs.getString("company_name"),
                     rs.getString("company_phone"),
-                    rs.getFloat("total")
+                    rs.getDouble("total")
             );
             payment.setConfirmed(rs.getBoolean("confirmed"));
             payment.setId(rs.getLong("payment_id"));
@@ -69,7 +69,7 @@ public class PaymentDao {
                         Statement.RETURN_GENERATED_KEYS);
                     ps.setString(1,payment.getCompany().getPhone());
                     ps.setString(2,payment.getCompany().getName());
-                    ps.setFloat(3, payment.getTotalAmount());
+                    ps.setDouble(3, payment.getTotalAmount());
                     ps.setTimestamp(4, Timestamp.valueOf(payment.getCreationDate()));
 
                     return ps;
