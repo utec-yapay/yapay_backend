@@ -1,6 +1,4 @@
 package com.project.yapayspringboot.controller;
-
-import com.auth0.jwt.JWT;
 import com.project.yapayspringboot.model.Payment;
 
 import com.project.yapayspringboot.service.PaymentService;
@@ -85,22 +83,19 @@ public class PaymentController {
             return new ResponseEntity<>("Missing JWT Payment ID", HttpStatus.BAD_REQUEST);
         }
 
-        if (!Payment.validateJwt(paymentIdJwt)){
+        if (!Payment.Token.validateToken(paymentIdJwt)){
             return new ResponseEntity<>("JWT is expired", HttpStatus.BAD_REQUEST);
         }
 
-        Long paymentId = JWT.decode(paymentIdJwt).getClaim("pid").asLong();
+        Long paymentId = Payment.Token.getClaim(paymentIdJwt, "pid").asLong();
 
         Payment paymentToConfirm;
-
         // Gets payment with id payment id from database
         try {
             paymentToConfirm = paymentService.getPaymentById(paymentId);
         } catch (EmptyResultDataAccessException e){
             return new ResponseEntity<>("Payment ID doesn't exist", HttpStatus.BAD_REQUEST);
         }
-
-
 
         // Verify if payment was already confirmed and change paymentToConfirm.confirmed
         if (!paymentToConfirm.confirm()){
