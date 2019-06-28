@@ -99,4 +99,19 @@ public class PaymentDao {
             payment.getId()
         );
     }
+
+    public List<Payment> selectYesterdayConfirmedPayments(){
+        return template.query("SELECT * FROM payments WHERE creation_date::DATE = CURRENT_DATE - 1 AND confirmed=TRUE",
+                (rs, rowNum) -> {
+                    Payment payment = new Payment(
+                            rs.getString("company_name"),
+                            rs.getString("company_phone"),
+                            rs.getFloat("total")
+                    );
+                    payment.setConfirmed(rs.getBoolean("confirmed"));
+                    payment.setId(rs.getLong("payment_id"));
+                    return payment;
+                }
+        );
+    }
 }
