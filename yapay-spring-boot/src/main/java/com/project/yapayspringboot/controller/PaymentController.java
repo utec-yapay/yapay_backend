@@ -52,7 +52,7 @@ public class PaymentController {
 
         /* Creates payment and returns the JSON
          *  Web Token (JWT) that will be use to
-         *  create a QR.myid
+         *  create a QR
          *
          *  JWT payload includes: paymentId, companyPhone,
          *                        companyName, amount
