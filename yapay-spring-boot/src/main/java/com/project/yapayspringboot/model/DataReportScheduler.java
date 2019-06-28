@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 
 @Component
 public class DataReportScheduler {
-    private static final Logger logger = Logger.getLogger(PaymentController.class.getName());
+    private static final Logger logger = Logger.getLogger(DataReportScheduler.class.getName());
 
     @Resource
     PaymentService paymentService;
@@ -27,10 +27,11 @@ public class DataReportScheduler {
     private String handlerUrl = "http://127.0.0.1:5001/handler/payments";
 
 
-    // @Scheduled(fixedRate = 10000) // For debugging only
-    
+
+
     // cron expressions: second, minute, hour, day, month, weekday
     @Scheduled(cron = "0 0 0 * * *") // midnight everyday
+//    @Scheduled(fixedRate = 10000) // For debugging only
     public void sendDataReport(){
         DataReport dataReport = new DataReport();
         dataReport.setPayments(paymentService.getYesterdayConfirmedPayments());
