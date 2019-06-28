@@ -8,6 +8,7 @@ import com.auth0.jwt.interfaces.Claim;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,6 +25,7 @@ public class Payment {
     @NotNull
     private Float totalAmount;
     private Boolean confirmed = false;
+    private LocalDateTime creation_date = LocalDateTime.now();
 
 
     public static class Token{
@@ -95,11 +97,14 @@ public class Payment {
 
     public void setId(Long id) { this.id = id; }
     public void setConfirmed(boolean confirmed) { this.confirmed = confirmed; }
+    public void setCreationDate(LocalDateTime creation_date) { this.creation_date = creation_date; }
 
     public Float getTotalAmount() { return totalAmount; }
     public Company getCompany() { return company; }
     public Long getId(){ return id; }
     public Boolean isConfirmed() { return confirmed; }
+    public LocalDateTime getCreationDate() { return creation_date; }
+
 
 
 }

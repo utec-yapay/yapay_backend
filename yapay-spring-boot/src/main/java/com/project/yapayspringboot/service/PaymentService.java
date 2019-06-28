@@ -24,6 +24,8 @@ public class PaymentService {
         paymentDao.updatePayment(payment);
     }
 
+    public List<Payment> getYesterdayConfirmedPayments(){ return paymentDao.selectYesterdayConfirmedPayments(); }
+
     public List<Payment> getAllPayments(){
         return paymentDao.selectAllPayments();
     }

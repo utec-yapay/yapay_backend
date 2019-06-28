@@ -1,23 +1,47 @@
 package com.project.yapayspringboot.dao;
 
+import com.project.yapayspringboot.controller.PaymentController;
 import com.project.yapayspringboot.model.Payment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
+import javax.validation.constraints.Null;
+import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Repository
 public class PaymentDao {
+    private static final Logger logger = Logger.getLogger(PaymentDao.class.getName());
     public PaymentDao(JdbcTemplate template) {
         this.template = template;
     }
 
     JdbcTemplate template;
+
+    private Payment databaseToPayment(ResultSet rs, int rowNum){
+        Payment payment;
+        try{
+            payment = new Payment(
+                    rs.getString("company_name"),
+                    rs.getString("company_phone"),
+                    rs.getFloat("total")
+            );
+            payment.setConfirmed(rs.getBoolean("confirmed"));
+            payment.setId(rs.getLong("payment_id"));
+            payment.setCreationDate(rs.getObject("creation_date", LocalDateTime.class));
+        }catch (SQLException e){
+            logger.log(Level.SEVERE, e.toString(), e);
+            return null;
+        }
+        logger.log(Level.FINE, "Payment created from database row");
+        return payment;
+    }
 
     public List<Payment> selectAllPayments() {
         /* Returns all the payments in the database
@@ -25,16 +49,7 @@ public class PaymentDao {
 
 
         return template.query("SELECT * FROM payments",
-                (rs, rowNum) -> {
-                    Payment payment = new Payment(
-                            rs.getString("company_name"),
-                            rs.getString("company_phone"),
-                            rs.getFloat("total")
-                    );
-                    payment.setConfirmed(rs.getBoolean("confirmed"));
-                    payment.setId(rs.getLong("payment_id"));
-                    return payment;
-                }
+                this::databaseToPayment
         );
         // Logger: .forEach(customer -> log.info(customer.toString()))
     }
@@ -50,11 +65,12 @@ public class PaymentDao {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         template.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(
-                "INSERT INTO payments(company_phone, company_name, total) VALUES (?,?,?)",
+                "INSERT INTO payments(company_phone, company_name, total, creation_date) VALUES (?,?,?,?)",
                         Statement.RETURN_GENERATED_KEYS);
                     ps.setString(1,payment.getCompany().getPhone());
                     ps.setString(2,payment.getCompany().getName());
                     ps.setFloat(3, payment.getTotalAmount());
+                    ps.setTimestamp(4, Timestamp.valueOf(payment.getCreationDate()));
 
                     return ps;
             }
@@ -68,16 +84,7 @@ public class PaymentDao {
 
         return template.queryForObject(
                 "SELECT * FROM payments WHERE payment_id = ?",
-                (rs, rowNum) -> {
-                     Payment payment = new Payment(
-                            rs.getString("company_name"),
-                            rs.getString("company_phone"),
-                            rs.getFloat("total")
-                    );
-                    payment.setConfirmed(rs.getBoolean("confirmed"));
-                    payment.setId(rs.getLong("payment_id"));
-                    return payment;
-                },
+                this::databaseToPayment,
                 paymentId
         );
     }
@@ -97,6 +104,12 @@ public class PaymentDao {
             payment.getTotalAmount(),
             payment.isConfirmed(),
             payment.getId()
+        );
+    }
+
+    public List<Payment> selectYesterdayConfirmedPayments(){
+        return template.query("SELECT * FROM payments WHERE creation_date::DATE = CURRENT_DATE - 1 AND confirmed=TRUE",
+                this::databaseToPayment
         );
     }
 }
