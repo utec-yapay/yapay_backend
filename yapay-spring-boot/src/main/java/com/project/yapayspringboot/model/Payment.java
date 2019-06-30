@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,9 +24,9 @@ public class Payment {
     @Valid
     private Company company;
     @NotNull
-    private Float totalAmount;
+    private Double totalAmount;
     private Boolean confirmed = false;
-    private LocalDateTime creation_date = LocalDateTime.now();
+    private LocalDateTime creation_date = LocalDateTime.now().minus(1, ChronoUnit.DAYS);
 
 
     public static class Token{
@@ -58,7 +59,7 @@ public class Payment {
             return JWT.decode(token).getClaim(key);
         }
 
-        static private String generateToken(Long id, Company company){
+        static private String generateToken(Long id, Company company, Double totalAmount){
             Calendar inOneMin = Calendar.getInstance();
             inOneMin.add(Calendar.MINUTE, 1);
 
@@ -66,6 +67,7 @@ public class Payment {
                     .withClaim("pid", id)
                     .withClaim("cpn", company.getName())
                     .withClaim("cpp", company.getPhone())
+                    .withClaim("amt", totalAmount)
                     .withExpiresAt(inOneMin.getTime())
                     .sign(algorithm);
         }
@@ -73,7 +75,7 @@ public class Payment {
 
     public Payment(@JsonProperty("cpn") String companyName,
                    @JsonProperty("cpp") String companyPhone,
-                   @JsonProperty("amt") float amount) {
+                   @JsonProperty("amt") Double amount) {
         /* This constructor is used when creating a
         *  new payment.
         *  The controller inserts the object to the
@@ -86,7 +88,7 @@ public class Payment {
     }
 
     public String generateJwt(){
-        return Token.generateToken(id, company);
+        return Token.generateToken(id, company, totalAmount);
     }
 
     public Boolean confirm(){
@@ -99,7 +101,7 @@ public class Payment {
     public void setConfirmed(boolean confirmed) { this.confirmed = confirmed; }
     public void setCreationDate(LocalDateTime creation_date) { this.creation_date = creation_date; }
 
-    public Float getTotalAmount() { return totalAmount; }
+    public Double getTotalAmount() { return totalAmount; }
     public Company getCompany() { return company; }
     public Long getId(){ return id; }
     public Boolean isConfirmed() { return confirmed; }

@@ -27,11 +27,9 @@ public class DataReportScheduler {
     private String handlerUrl = "http://127.0.0.1:5001/handler/payments";
 
 
-
-
     // cron expressions: second, minute, hour, day, month, weekday
-    @Scheduled(cron = "0 0 0 * * *") // midnight everyday
-//    @Scheduled(fixedRate = 10000) // For debugging only
+//    @Scheduled(cron = "0 0 0 * * *") // midnight everyday
+    @Scheduled(fixedRate = 20000) // For debugging only
     public void sendDataReport(){
         DataReport dataReport = new DataReport();
         dataReport.setPayments(paymentService.getYesterdayConfirmedPayments());
@@ -51,6 +49,7 @@ public class DataReportScheduler {
         HttpPost post = new HttpPost(this.handlerUrl);
         post.setEntity(dataReportJson);
 
+        logger.log(Level.FINE, "Data report is being sent");
         try {
             if (httpClient.execute(post).getStatusLine().getStatusCode()!=200){
                 logger.log(Level.FINE, "Data report sent successfully");
@@ -58,8 +57,5 @@ public class DataReportScheduler {
         }catch (IOException e){
             logger.log(Level.SEVERE, e.toString(), e);
         }
-
-
-        System.out.println(dataReportJson);
     }
 }
