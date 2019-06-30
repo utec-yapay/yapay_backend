@@ -24,7 +24,7 @@ public class DataReportScheduler {
     @Resource
     PaymentService paymentService;
 
-    private String handlerUrl = "http://127.0.0.1:5001/handler/payments";
+    private String handlerUrl = "http://yape_handler/handler/payments";
 
 
     // cron expressions: second, minute, hour, day, month, weekday
