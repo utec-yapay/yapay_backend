@@ -28,8 +28,8 @@ public class DataReportScheduler {
 
 
     // cron expressions: second, minute, hour, day, month, weekday
-//    @Scheduled(cron = "0 0 0 * * *") // midnight everyday
-    @Scheduled(fixedRate = 20000) // For debugging only
+    @Scheduled(cron = "0 0 0 * * *") // midnight everyday
+//    @Scheduled(fixedRate = 20000) // For debugging only
     public void sendDataReport(){
         DataReport dataReport = new DataReport();
         dataReport.setPayments(paymentService.getYesterdayConfirmedPayments());
