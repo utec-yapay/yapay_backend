@@ -12,6 +12,7 @@
     <artifactId>yapay-spring-boot</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>yapay-spring-boot</name>
+    <packaging>jar</packaging>
     <description>Prototype for Yapay</description>
 
     <properties>
